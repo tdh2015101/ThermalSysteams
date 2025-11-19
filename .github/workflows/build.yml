@@ -1,0 +1,29 @@
+name: Build mod
+
+on: [ push, pull_request, workflow_dispatch ]
+
+jobs:
+  build:
+    name: Build mod
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'dragonwell'
+          java-version: '17'
+          cache: gradle # Only cache stuff since test build action happen mostly
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Download dep
+        run: mkdir run && mkdir run/external-mods && wget 'https://cdn.modrinth.com/data/QejnMYJo/versions/KDqr1s3P/ThermalExtra-3.3.0-1.20.1.jar' -o run/external-mods/ThermalExtra-3.3.0-1.20.1.jar
+      - name: Build with Gradle
+        run: ./gradlew build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: MekanismCEu
+          path: build/libs
