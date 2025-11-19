@@ -27,7 +27,7 @@ jobs:
       - name: verify (4/4)
         run: ls run/external-mods
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew jar
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
