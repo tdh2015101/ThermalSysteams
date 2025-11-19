@@ -25,7 +25,7 @@ jobs:
       - name: download (3/4)
         run: wget 'https://cdn.modrinth.com/data/QejnMYJo/versions/KDqr1s3P/ThermalExtra-3.3.0-1.20.1.jar' -o run/external-mods/ThermalExtra-3.3.0-1.20.1.jar
       - name: verify (4/4)
-        run: ls run/external-mods
+        run: ls -l run/external-mods && mv ThermalExtra-3.3.0-1.20.1.jar ThermalExtra.jar && ls -l run/external-mods
       - name: Build with Gradle
         run: ./gradlew jar
       - name: Upload artifacts
