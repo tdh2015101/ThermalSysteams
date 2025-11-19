@@ -14,6 +14,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -22,6 +23,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.extensions.IForgeBlockGetter;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
@@ -108,7 +110,38 @@ public class BoilerBlock extends EntityBlockActive6Way implements SimpleWaterlog
 		return super.getStateForPlacement(context).setValue(WATERLOGGED, flag);
 	}
 
-	@SubscribeEvent // Block#use does not trigger when crouching, so use the event
+    /**
+     * Get a light value for this block, taking into account the given state and coordinates, normal ranges are between 0 and 15
+     *
+     * @param state The state of this block
+     * @param level The level this block is in
+     * @param pos   The position of this block in the level, will be {@link BlockPos#ZERO} when the chunk being loaded or
+     *              generated calls this to check whether it contains any light sources
+     * @return The light value
+     * @implNote <ul>
+     * <li>
+     * If the given state of this block may emit light but requires position context to determine the light
+     * value, then it must return a non-zero light value if {@code (pos == BlockPos.ZERO)} in order for the
+     * chunk calling this to be considered as containing light sources.
+     * </li>
+     * <li>
+     * The given {@link BlockGetter} may be a chunk. Block, fluid or block entity accesses outside of its bounds
+     * will cause issues such as wrapping coordinates returning values from the opposing chunk edge
+     * </li>
+     * <li>
+     * This method may be called on a worker thread and must therefore use
+     * {@link IForgeBlockGetter#getExistingBlockEntity(BlockPos)} to retrieve the {@link BlockEntity}
+     * at the given position
+     * </li>
+     * </ul>
+     */
+    @Override
+    public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
+        if (state.getValue(WATERLOGGED)) return 0;
+        return 1;
+    }
+
+    @SubscribeEvent // Block#use does not trigger when crouching, so use the event
 	public static void use(PlayerInteractEvent.RightClickBlock event) {
 		Level level = event.getLevel();
 		BlockPos pos = event.getHitVec().getBlockPos();

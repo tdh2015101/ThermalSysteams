@@ -124,6 +124,7 @@ dependencies {
     implementation fg.deobf("me.desht.pneumaticcraft:pneumaticcraft-repressurized:${pncr_version}+mc${minecraft_version}")
 
     //TODO: Swap this out for a release from cursemaven once its actually published.
+    //implementation fg.deobf("local:ThermalExtra:${thermal_extra_version}-${minecraft_version}")
     implementation fg.deobf("local:ThermalExtra:${thermal_extra_version}-${minecraft_version}")
 
     // run game with a few extra mods for testing
